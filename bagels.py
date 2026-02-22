@@ -1,7 +1,7 @@
 import random
 
-NUM_DIGITS = 3  
-MAX_GUESSES = 10  
+NUM_DIGITS = 3
+MAX_GUESSES = 10
 
 def main():
     print('''Bagels, a deductive logic game.
@@ -17,7 +17,7 @@ When I say:    That means:
 For example, if the secret number was 248 and your guess was 843, the
 clues would be Fermi Pico.'''.format(NUM_DIGITS))
 
-    while True: 
+    while True:
 
         secretNum = getSecretNum()
         print('I have thought up a number.')
@@ -36,12 +36,12 @@ clues would be Fermi Pico.'''.format(NUM_DIGITS))
             numGuesses += 1
 
             if guess == secretNum:
-                break 
+                break
             if numGuesses > MAX_GUESSES:
                 print('You ran out of guesses.')
                 print('The answer was {}.'.format(secretNum))
 
-        
+
         print('Do you want to play again? (yes or no)')
         if not input('> ').lower().startswith('y'):
             break
@@ -50,10 +50,10 @@ clues would be Fermi Pico.'''.format(NUM_DIGITS))
 
 def getSecretNum():
     """Returns a string made up of NUM_DIGITS unique random digits."""
-    numbers = list('0123456789')  
-    random.shuffle(numbers) 
+    numbers = list('0123456789')
+    random.shuffle(numbers)
 
-   
+
     secretNum = ''
     for i in range(NUM_DIGITS):
         secretNum += str(numbers[i])
@@ -68,20 +68,31 @@ def getClues(guess, secretNum):
 
     clues = []
 
-    for i in range(len(guess)):
-        if guess[i] == secretNum[i]:
-            
-            clues.append('Fermi')
-        elif guess[i] in secretNum:
+    # Check for Fermi matches first
+    secretNumList = list(secretNum)
+    guessList = list(guess)
 
+    for i in range(len(guess)):
+        if guessList[i] == secretNumList[i]:
+            clues.append('Fermi')
+            secretNumList[i] = None # Mark as matched
+            guessList[i] = None # Mark as matched
+
+    # Check for Pico matches
+    for i in range(len(guess)):
+        if guessList[i] is None:
+            continue
+
+        if guessList[i] in secretNumList:
             clues.append('Pico')
+            # Remove the matched digit from secretNumList to prevent double counting
+            secretNumList[secretNumList.index(guessList[i])] = None
+
     if len(clues) == 0:
-        return 'Bagels'  
-    else:
-        
-        clues.sort()
-       
-        return ' '.join(clues)
+        return 'Bagels'
+
+    clues.sort()
+    return ' '.join(clues)
 
 
 
