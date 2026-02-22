@@ -67,20 +67,26 @@ def getClues(guess, secretNum):
         return 'You got it!'
 
     clues = []
+    matched_secret_indices = set()
 
     for i in range(len(guess)):
         if guess[i] == secretNum[i]:
-            
             clues.append('Fermi')
-        elif guess[i] in secretNum:
+            matched_secret_indices.add(i)
 
-            clues.append('Pico')
+    for i in range(len(guess)):
+        if guess[i] != secretNum[i]:
+            # Check if guess[i] exists in secretNum at an unmatched index
+            for j in range(len(secretNum)):
+                if guess[i] == secretNum[j] and j not in matched_secret_indices:
+                    clues.append('Pico')
+                    matched_secret_indices.add(j)
+                    break
+
     if len(clues) == 0:
-        return 'Bagels'  
+        return 'Bagels'
     else:
-        
         clues.sort()
-       
         return ' '.join(clues)
 
 
